@@ -61,23 +61,48 @@ void* factorize(void* arg) {
     unsigned long long int l = strlen(num);
     unsigned long long int ctr = 0;
     unsigned long long int nchanges = 0;
-    float score = 0.0;
-    while (ctr < l) {
-        char nn = 0;
+    unsigned long score = 0;
+    unsigned long score_0_5 = 0;
+    char nn = 0, cc = 0;
+    while (1) {
         int ret = fscanf(f, "%c", &nn);
-        char cc = 0;
         ret = fscanf(g, "%c", &cc);
         int ck = cc - '0';
-        nchanges += ck;
+	if (ck == 1 && nn != '0') {
+		nchanges += ck;
+	}
         if (nn == num[ctr]) {
               bool isRiemann1 = isRiemannZero(nchanges);
               unsigned long long int _reverse_of_nchanges_ = _reverse_of_(nchanges);
               bool isRiemann2 = isRiemannZero(_reverse_of_nchanges_);
               if (isRiemann1 && !isRiemann2) {
-                  factor += boost::lexical_cast<std::string>(score);
                   ++ctr;
-                  score = 0.0;
               } else if (isRiemann1 && isRiemann2) {
+              } else if (!isRiemann1) {
+              }
+              break;
+        }
+    }
+    while (ctr < l) {
+        int ret = fscanf(f, "%c", &nn);
+        ret = fscanf(g, "%c", &cc);
+        int ck = cc - '0';
+	if (ck == 1 && nn != '0') {
+		nchanges += ck;
+	}
+        if (nn == num[ctr]) {
+              bool isRiemann1 = isRiemannZero(nchanges);
+              unsigned long long int _reverse_of_nchanges_ = _reverse_of_(nchanges);
+              bool isRiemann2 = isRiemannZero(_reverse_of_nchanges_);
+              if (isRiemann1 && !isRiemann2) {
+		  if (score_0_5 % 2 == 0) {
+                      score += score_0_5*0.5;
+                  }
+                  factor += boost::lexical_cast<std::string>(score);
+                  score = score_0_5 = 0;
+                  ++ctr;
+              } else if (isRiemann1 && isRiemann2) {
+                  score_0_5++;
               } else if (!isRiemann1) {
                   score++;
               }
