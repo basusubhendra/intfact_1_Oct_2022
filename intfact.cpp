@@ -78,7 +78,6 @@ void* factorize(void* arg) {
                   ++ctr;
                   score = 0.0;
               } else if (isRiemann1 && isRiemann2) {
-                  score += 0.5;
               } else if (!isRiemann1) {
                   score++;
               }
