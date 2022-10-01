@@ -1,1 +1,1 @@
-g++ -Ofast -o  ./factorize intfact.cpp
+g++ -Ofast -o  ./factorize intfact.cpp -lpthread
