@@ -7,7 +7,7 @@
 #include <vector>
 #include "zeros.hpp"
 using namespace std;
-#define NZEROS 2001052
+#define NZEROS 2001053
 
 struct a {
     char* num;
@@ -65,10 +65,6 @@ void* factorize(void* arg) {
     while (ctr < l) {
         int ret = fscanf(f, "%c", &nn);
         ret = fscanf(g, "%c", &cc);
-        int ck = cc - '0';
-	if (ck == 1 && nn != '0') {
-		nchanges += ck;
-	}
         if (nn == num[ctr]) {
               bool isRiemann1 = isRiemannZero(nchanges);
               unsigned long long int _reverse_of_nchanges_ = _reverse_of_(nchanges);
@@ -100,6 +96,16 @@ int main(int argc, char* argv[]) {
     pthread_create(&thread_id1, NULL, factorize, arg1);
     pthread_create(&thread_id2, NULL, factorize, arg2);
     pthread_join(thread_id1, (void**) &ret1);
-    pthread_join(thread_id2,(void**) &ret2);
+    pthread_join(thread_id2, (void**) &ret2);
+    int partition_index = 0;
+    for ( ; partition_index < ret1->size(); ++partition_index) {
+       unsigned long long int res1 = ret1->at(partition_index);
+       unsigned long long int res2 = ret2->at(partition_index);
+       unsigned long long int sum = res1 + res2;
+       sum = (sum % 2 == 0)? (sum / 2):sum;
+       printf("\nParititon : \t %d\t%llu\n", partition_index+1, res1);
+       printf("\nParititon : \t %d\t%llu\n", partition_index+1, res2);
+       printf("\nSum : \t %d\t%llu\n", partition_index+1, sum);
+    }
     return 0;
 }
