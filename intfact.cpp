@@ -3,11 +3,10 @@
 #include <iostream>
 #include <string.h>
 #include <string>
-#include <boost/lexical_cast.hpp>
 #include <pthread.h>
+#include <vector>
 #include "zeros.hpp"
 using namespace std;
-using namespace boost;
 #define NZEROS 2001052
 
 struct a {
@@ -50,7 +49,7 @@ void* factorize(void* arg) {
     char* num = ((struct a*) arg)->num;
     short int param = ((struct a*) arg)->param;
     FILE* f = 0, *g = 0;
-    std::string factor = "";
+    vector<unsigned long long int>* result = new vector<unsigned long long int>();
     if (param == 1) {
           f = fopen64("./positive_values.txt","r");
           g = fopen64("./positive_changes.txt","r");
@@ -61,28 +60,8 @@ void* factorize(void* arg) {
     unsigned long long int l = strlen(num);
     unsigned long long int ctr = 0;
     unsigned long long int nchanges = 0;
-    unsigned long score = 0;
     unsigned long score_0_5 = 0;
     char nn = 0, cc = 0;
-    while (1) {
-        int ret = fscanf(f, "%c", &nn);
-        ret = fscanf(g, "%c", &cc);
-        int ck = cc - '0';
-	if (ck == 1 && nn != '0') {
-		nchanges += ck;
-	}
-        if (nn == num[ctr]) {
-              bool isRiemann1 = isRiemannZero(nchanges);
-              unsigned long long int _reverse_of_nchanges_ = _reverse_of_(nchanges);
-              bool isRiemann2 = isRiemannZero(_reverse_of_nchanges_);
-              if (isRiemann1 && !isRiemann2) {
-                  ++ctr;
-              } else if (isRiemann1 && isRiemann2) {
-              } else if (!isRiemann1) {
-              }
-              break;
-        }
-    }
     while (ctr < l) {
         int ret = fscanf(f, "%c", &nn);
         ret = fscanf(g, "%c", &cc);
@@ -95,21 +74,17 @@ void* factorize(void* arg) {
               unsigned long long int _reverse_of_nchanges_ = _reverse_of_(nchanges);
               bool isRiemann2 = isRiemannZero(_reverse_of_nchanges_);
               if (isRiemann1 && !isRiemann2) {
-		  if (score_0_5 % 2 == 0) {
-                      score += score_0_5*0.5;
-                  }
-                  factor += boost::lexical_cast<std::string>(score);
-                  score = score_0_5 = 0;
+                  result->push_back(score_0_5);
+                  score_0_5 = 0;
                   ++ctr;
               } else if (isRiemann1 && isRiemann2) {
                   score_0_5++;
-              } else if (!isRiemann1) {
-                  score++;
               }
         }
     }
     fclose(f);
     fclose(g);
+    return result;
 }
 
 int main(int argc, char* argv[]) {
@@ -120,7 +95,7 @@ int main(int argc, char* argv[]) {
     struct a* arg2 = new (struct a)();
     arg2->num = strdup(num);
     arg2->param = 0;
-    char* ret1 = 0, *ret2 = 0;
+    vector<unsigned long long int>* ret1 = 0, *ret2 = 0;
     pthread_t thread_id1, thread_id2;
     pthread_create(&thread_id1, NULL, factorize, arg1);
     pthread_create(&thread_id2, NULL, factorize, arg2);
