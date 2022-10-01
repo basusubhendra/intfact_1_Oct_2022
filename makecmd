@@ -1,1 +1,1 @@
-g++ -Ofast -o  ./factorize intfact.cpp -lpthread
+g++ -Ofast `getconf LFS_CFLAGS` -o  ./factorize intfact.cpp -lpthread
